@@ -1,12 +1,20 @@
 import React from "react";
 import styled from "styled-components";
+import AppBar from "../Appbar/Appbar";
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 16px;
-  padding-bottom: 24px;
+max-width: 1170,
+margin-left: auto,
+margin-right: auto,
+padding-right: 12,
+padding-left: 12,
 `;
 
-const Layout = ({ children }) => <Container>{children}</Container>;
+const Layout = ({ children }) => (
+  <Container>
+    <AppBar />
+    <hr />
+    {children}
+  </Container>
+);
 export default Layout;

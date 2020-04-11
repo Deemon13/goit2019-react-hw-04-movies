@@ -6,15 +6,8 @@ const myAPIkey = "9eab4199b01913b6a81b6702a89a7ff0";
 const fetchDayTrending = () => {
   return axios
     .get(`${BASE_URL}/trending/movie/day?api_key=${myAPIkey}`)
-    .then(res => {
-      console.log(res);
-    })
-    .then(data => {
-      console.log(data);
-    });
-
-  // .then(res => res.data)
-  // .then(data => data.results);
+    .then(res => res.data)
+    .then(data => data.results);
 };
 
 const fetchMovieByName = movieName => {
@@ -26,7 +19,14 @@ const fetchMovieByName = movieName => {
     .then(data => data.results);
 };
 
+const fetchMovieDetails = movieId => {
+  return axios
+    .get(`${BASE_URL}/movie/${movieId}?api_key=${myAPIkey}`)
+    .then(res => res.data);
+};
+
 export default {
   fetchDayTrending,
-  fetchMovieByName
+  fetchMovieByName,
+  fetchMovieDetails
 };

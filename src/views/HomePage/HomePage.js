@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import movApi from "../../services/movieAPI";
 
-export default class Homepage extends Component {
+export default class MoviesTrend extends Component {
   state = {
     movies: []
   };
 
   componentDidMount() {
-    movApi.fetchMovieByName("anal").then(movies => this.setState({ movies }));
+    movApi.fetchDayTrending().then(movies => this.setState({ movies }));
   }
 
   render() {
@@ -20,9 +20,7 @@ export default class Homepage extends Component {
           <ul>
             {movies.map(movie => (
               <li key={movie.id}>
-                <Link to={`${this.props.match.url}/${movie.id}`}>
-                  {movie.title}
-                </Link>
+                <Link to={`/movies/${movie.id}`}>{movie.title}</Link>
               </li>
             ))}
           </ul>

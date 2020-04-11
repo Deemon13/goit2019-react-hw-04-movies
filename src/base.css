@@ -54,3 +54,11 @@ h2 {
   font-family: inherit;
   vertical-align: baseline;
 }
+
+a {
+  color: black;
+}
+
+.activeLink {
+  color: red;
+}

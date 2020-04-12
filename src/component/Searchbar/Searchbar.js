@@ -1,24 +1,6 @@
 import React, { Component } from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import styled from "styled-components";
-const Headerform = styled.header`
-  top: 0;
-  left: 0;
-  position: sticky;
-  z-index: 1100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 64px;
-  padding-right: 24px;
-  padding-left: 24px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  color: #fff;
-  background-color: #9af1ad;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
-    0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
-`;
 
 const SearchForm = styled.form`
   display: flex;
@@ -26,9 +8,15 @@ const SearchForm = styled.form`
   width: 100%;
   max-width: 600px;
   background-color: #fff;
+  border: 0.1rem solid black;
   border-radius: 3px;
   overflow: hidden;
+  &:hover,
+  &:focus {
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.75);
+  }
 `;
+
 const SearchFormButton = styled.button`
   display: inline-block;
   width: 48px;
@@ -76,11 +64,11 @@ const SearchFormInput = styled.input`
 export default class SearchBar extends Component {
   state = { inputValue: "" };
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({ inputValue: e.target.value });
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault();
     this.props.onSubmit(this.state.inputValue);
     this.setState({ inputValue: "" });
@@ -88,26 +76,24 @@ export default class SearchBar extends Component {
 
   render() {
     return (
-      <Headerform>
-        <SearchForm onSubmit={this.handleSubmit}>
-          <SearchFormButton type="submit">
-            <SearchFormButtonLabel>Search</SearchFormButtonLabel>
-          </SearchFormButton>
+      <SearchForm onSubmit={this.handleSubmit}>
+        <SearchFormButton type="submit">
+          <SearchFormButtonLabel>Search</SearchFormButtonLabel>
+        </SearchFormButton>
 
-          <SearchFormInput
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search movie"
-            value={this.state.inputValue}
-            onChange={this.handleChange}
-          />
-        </SearchForm>
-      </Headerform>
+        <SearchFormInput
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search movie"
+          value={this.state.inputValue}
+          onChange={this.handleChange}
+        />
+      </SearchForm>
     );
   }
 }
 
-// SearchBar.propTypes = {
-//   onSubmit: PropTypes.func.isRequired
-// };
+SearchBar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};

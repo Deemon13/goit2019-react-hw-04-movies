@@ -1,29 +1,52 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import styled from "styled-components";
+import MoviesList from "../../component/MoviesList/MoviesList";
 import movApi from "../../services/movieAPI";
+import Spiner from "../../component/Loader/Loader";
+import Notification from "../../component/Notification/Notification";
+
+const Title = styled.h1`
+  display: inline-block;
+  margin-left: 5%;
+  font-size: 4rem;
+  font-weight: 500;
+  margin-bottom: 5rem;
+`;
 
 export default class MoviesTrend extends Component {
   state = {
-    movies: []
+    movies: [],
+    loading: false,
+    error: null,
   };
 
   componentDidMount() {
-    movApi.fetchDayTrending().then(movies => this.setState({ movies }));
+    this.setState({ loading: true });
+    movApi
+      .fetchDayTrending()
+      .then((movies) => this.setState({ movies }))
+      .catch((error) => this.setState({ error }))
+      .finally(() => {
+        this.setState({ loading: false });
+      });
   }
 
   render() {
-    const { movies } = this.state;
+    const { movies, loading, error } = this.state;
+    const { location } = this.props;
     return (
       <>
-        <h1>Trending today</h1>
+        {error && (
+          <Notification
+            message={`Whoops, something went wrong: ${error.message}`}
+          />
+        )}
+
+        {loading && <Spiner />}
+
+        <Title>Trending today</Title>
         {movies.length > 0 && (
-          <ul>
-            {movies.map(movie => (
-              <li key={movie.id}>
-                <Link to={`/movies/${movie.id}`}>{movie.title}</Link>
-              </li>
-            ))}
-          </ul>
+          <MoviesList moviesList={movies} location={location} />
         )}
       </>
     );

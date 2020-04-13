@@ -26,13 +26,12 @@ class Cast extends Component {
   };
 
   componentDidMount() {
-    const { match } = this.props;
-    const { movieId } = match.params;
-    return this.fetchMovieCast(movieId);
+    this.fetchMovieCast();
   }
 
-  fetchMovieCast = (movieId) => {
+  fetchMovieCast = () => {
     this.setState({ loading: true });
+    const movieId = this.props.match.params.movieId;
     movApi
       .fetchMovieCast(movieId)
       .then((movie) => movie.cast)

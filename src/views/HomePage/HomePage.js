@@ -4,6 +4,7 @@ import MoviesList from "../../component/MoviesList/MoviesList";
 import movApi from "../../services/movieAPI";
 import Spiner from "../../component/Loader/Loader";
 import Notification from "../../component/Notification/Notification";
+import Button from "../../component/Button/Button";
 
 const Title = styled.h1`
   display: inline-block;
@@ -18,18 +19,42 @@ export default class MoviesTrend extends Component {
     movies: [],
     loading: false,
     error: null,
+    page: 1,
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.movies !== prevState.movies) {
+      this.scroller();
+    }
+  }
+
   componentDidMount() {
+    this.fetchPerDayTrending();
+  }
+
+  fetchPerDayTrending = () => {
+    const { page } = this.state;
     this.setState({ loading: true });
     movApi
-      .fetchDayTrending()
-      .then((movies) => this.setState({ movies }))
+      .fetchDayTrending(page)
+      .then((movies) =>
+        this.setState((prevState) => ({
+          movies: [...prevState.movies, ...movies],
+          page: prevState.page + 1,
+        }))
+      )
       .catch((error) => this.setState({ error }))
       .finally(() => {
         this.setState({ loading: false });
       });
-  }
+  };
+
+  scroller = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
 
   render() {
     const { movies, loading, error } = this.state;
@@ -47,6 +72,11 @@ export default class MoviesTrend extends Component {
         <Title>Trending today</Title>
         {movies.length > 0 && (
           <MoviesList moviesList={movies} location={location} />
+        )}
+        {movies.length > 0 && !loading && (
+          <Button type="button" onClickButton={this.fetchPerDayTrending}>
+            Load more
+          </Button>
         )}
       </>
     );

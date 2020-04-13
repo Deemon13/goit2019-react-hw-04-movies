@@ -6,6 +6,7 @@ import SearchBar from "../../component/Searchbar/Searchbar";
 import MoviesList from "../../component/MoviesList/MoviesList";
 import Spiner from "../../component/Loader/Loader";
 import Notification from "../../component/Notification/Notification";
+import Button from "../../component/Button/Button";
 
 const Title = styled.h1`
   display: inline-block;
@@ -20,6 +21,8 @@ export default class Movies extends Component {
     movies: [],
     loading: false,
     error: null,
+    page: 1,
+    searchdone: false,
   };
 
   componentDidMount() {
@@ -29,14 +32,36 @@ export default class Movies extends Component {
       this.fetchMoviesByQuery(query);
       return;
     }
+    this.fetchPerDayTrending();
+  }
+
+  fetchMoviesByQuery = (query) => {
+    this.setState({ loading: true });
     movApi
-      .fetchDayTrending()
-      .then((movies) => this.setState({ movies }))
+      .fetchMovieByName(query)
+      .then((movies) => this.setState({ movies, searchdone: true }))
       .catch((error) => this.setState({ error }))
       .finally(() => {
         this.setState({ loading: false });
       });
-  }
+  };
+
+  fetchPerDayTrending = () => {
+    const { page } = this.state;
+    this.setState({ loading: true });
+    movApi
+      .fetchDayTrending(page)
+      .then((movies) =>
+        this.setState((prevState) => ({
+          movies: [...prevState.movies, ...movies],
+          page: prevState.page + 1,
+        }))
+      )
+      .catch((error) => this.setState({ error }))
+      .finally(() => {
+        this.setState({ loading: false });
+      });
+  };
 
   componentDidUpdate(prevProps, prevState) {
     const { query: prevQuery } = getQueryString(prevProps.location.search);
@@ -46,17 +71,6 @@ export default class Movies extends Component {
     }
   }
 
-  fetchMoviesByQuery = (query) => {
-    this.setState({ loading: true });
-    movApi
-      .fetchMovieByName(query)
-      .then((movies) => this.setState({ movies }))
-      .catch((error) => this.setState({ error }))
-      .finally(() => {
-        this.setState({ loading: false });
-      });
-  };
-
   handleChangeQuery = (query) => {
     this.props.history.push({
       ...this.props.location,
@@ -65,7 +79,7 @@ export default class Movies extends Component {
   };
 
   render() {
-    const { movies, loading, error } = this.state;
+    const { movies, loading, error, searchdone } = this.state;
     const { location } = this.props;
     return (
       <>
@@ -77,12 +91,18 @@ export default class Movies extends Component {
         )}
 
         {loading && <Spiner />}
-
+        {!searchdone ? (
+          <Title>Trending today</Title>
+        ) : (
+          <Title>Search results</Title>
+        )}
         {movies.length > 0 && (
-          <>
-            <Title>Trending today</Title>
-            <MoviesList moviesList={movies} location={location} />
-          </>
+          <MoviesList moviesList={movies} location={location} />
+        )}
+        {!searchdone && (
+          <Button type="button" onClickButton={this.fetchPerDayTrending}>
+            Load more
+          </Button>
         )}
       </>
     );

@@ -7,7 +7,7 @@ const Container = styled.div`
 `;
 
 const WrapperViewPage = styled.section`
-  margin: 0 auto;
+  margin: 0 auto 10rem;
   display: flex;
   justify-content: center;
   align-items: center;
